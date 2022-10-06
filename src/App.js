@@ -1,25 +1,67 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react'
 
-function App() {
+import { connect } from 'react-redux'
+import { fetchData } from './actions'
+
+let styles  
+const App = (props) => {
+  const {container, text, button, buttonText} = styles
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div style={container}>
+      <div style={text}>Redux Examples</div>
+      <div style={button} onClick={() => console.log(props)}>
+        <div style={buttonText}>
+          {
+            props.appData.isFetching && <div>Loading</div>
+          }
+          {
+            props.appData.data.length ? (
+              props.appData.data.map((person, i) => {
+                return <div key={i} >
+                  <div>Name: {person.name}</div>
+                  <div>Age: {person.age}</div>
+                </div>
+              })
+            ) : null
+          }
+        </div>
+      </div>
     </div>
-  );
+  )
+}
+styles = {
+  container: {
+    marginTop: 100
+  },
+  text: {
+    textAlign: 'center'
+  },
+  button: {
+    display: 'flex',
+    minHeight: 60,
+    margin: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#0b7eff'
+  },
+  buttonText: {
+    color: 'white'
+  }
+}
+function mapStateToProps (state) {
+  return {
+    appData: state.appData
+  }
 }
 
-export default App;
+function mapDispatchToProps (dispatch) {
+  return {
+    fetchData: () => dispatch(fetchData())
+  }
+}
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(App)
